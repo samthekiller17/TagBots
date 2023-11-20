@@ -1,63 +1,3 @@
-/*using Photon.Pun;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-
-public class Codigo_Salud : MonoBehaviour
-{
-
-    public float Salud = 100;   
-    public float SaludMaxima = 100;
-
-    [Header("Interfaz")]
-    public Image BarraSalud;
-    public Text TextoSalud;
-    public PhotonView photonView;
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        if(photonView.IsMine)//Para activar todo lo de mi personaje
-        {
-
-            BarraSalud = GameObject.Find("Canvas/Salud/Barrra").GetComponent<Image>();
-            TextoSalud = GameObject.Find("Canvas/Salud/TextoSalud").GetComponent<Text>();
-        }
-
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (BarraSalud && TextoSalud)
-        {
-            ActualizarInterfaz();
-        }
-        
-    }
-    
-    public void RecibirDaño(float daño)
-    {
-        Salud -= daño;
-    }
-
-    void ActualizarInterfaz()
-    {
-        BarraSalud.fillAmount = Salud / SaludMaxima;
-        TextoSalud.text = "Salud : " + Salud.ToString("f0");    
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.transform.CompareTag("Bala"))
-        {
-            RecibirDaño(10);
-        }
-    }
-}*/
-
 using Photon.Pun;
 using System.Collections;
 using UnityEngine;
@@ -68,6 +8,10 @@ public class Codigo_Salud : MonoBehaviourPunCallbacks
     public float Salud = 100;
     public float SaludMaxima = 100;
     public float tiempoRespawn = 1f; // Tiempo de respawn después de morir
+    public float Defensa = 0; // Agregar una variable para la defensa
+    private bool defensaActiva = false;
+    private float duracionDefensa = 10f; // Duración de la defensa activa en segundos
+    private float tiempoRestanteDefensa = 0f; // Tiempo restante de la defensa activa
 
     [Header("Interfaz")]
     public Image BarraSalud;
@@ -92,6 +36,20 @@ public class Codigo_Salud : MonoBehaviourPunCallbacks
         if (BarraSalud && TextoSalud)
         {
             ActualizarInterfaz();
+        }
+        if (defensaActiva)
+        {
+            if (tiempoRestanteDefensa > 0)
+            {
+                tiempoRestanteDefensa -= Time.deltaTime;
+                if (tiempoRestanteDefensa <= 0)
+                {
+                    tiempoRestanteDefensa = 0;
+                    Defensa = 0; // Volver a la defensa normal después de que termine el tiempo de duración
+                    defensaActiva = false;
+                    Debug.Log("Defensa desactivada");
+                }
+            }
         }
     }
 
@@ -152,6 +110,26 @@ public class Codigo_Salud : MonoBehaviourPunCallbacks
         {
             RecibirDaño(10);
         }
+        if (estaVivo && other.transform.CompareTag("defensa"))
+        {
+            AumentarDefensa(5); // Aumentar la defensa por 5 unidades cuando toque un power-up con la etiqueta "defensa"
+            other.gameObject.SetActive(false); // Desactivar el power-up
+        }
+    }
+
+    void AumentarDefensa(float aumento)
+    {
+        Defensa += aumento;
+        Debug.Log("Defensa aumentada a: " + Defensa);
+        if (!defensaActiva)
+        {
+            defensaActiva = true;
+            tiempoRestanteDefensa = duracionDefensa;
+            Debug.Log("Defensa activada por " + duracionDefensa + " segundos");
+        }
+        else
+        {
+            tiempoRestanteDefensa = duracionDefensa; // Reiniciar el tiempo si se recoge otro power-up de defensa mientras está activa
+        }
     }
 }
-

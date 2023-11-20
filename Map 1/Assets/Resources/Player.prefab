@@ -143,6 +143,7 @@ MonoBehaviour:
   photonView: {fileID: 1732420510584558973}
   camara: {fileID: 3967571783450707781}
   textNickName: {fileID: 296112706650861793}
+  defensa: 10
 --- !u!114 &1732420510584558973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,6 +182,7 @@ MonoBehaviour:
   Salud: 100
   SaludMaxima: 100
   tiempoRespawn: 0.2
+  Defensa: 10
   BarraSalud: {fileID: 0}
   TextoSalud: {fileID: 0}
   photonView: {fileID: 1732420510584558973}
@@ -743,7 +745,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 7497097609963575489, guid: 4e369d805565c89428c4d69011e8138a, type: 3}
   ShootSpawn: {fileID: 1335234051312882363}
-  fuerzaDisparo: 50
+  fuerzaDisparo: 80
   distanciaMaxima: 100
   tiempoDeVida: 1
 --- !u!1 &8545781974973160728
